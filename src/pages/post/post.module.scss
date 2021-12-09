@@ -12,6 +12,7 @@
   }
 
   p,
+  span,
   a,
   ul {
     font-size: 1.125rem;
@@ -22,6 +23,11 @@
 
   a {
     color: var(--pink);
+  }
+
+  strong {
+    font-weight: 700;
+    color: var(--gray-200);
   }
 
   ul {
