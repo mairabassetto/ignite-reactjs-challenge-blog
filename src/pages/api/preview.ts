@@ -1,8 +1,34 @@
-import { linkResolver } from '../../../prismicConfiguration';
-import { Client } from '../../utils/prismicHelpers.js';
+import Prismic from '@prismicio/client';
+
+import { Document } from '@prismicio/client/types/documents';
+
+export const apiEndpoint = process.env.PRISMIC_API_ENDPOINT;
+export const accessToken = process.env.PRISMIC_ACCESS_TOKEN;
+
+function linkResolver(doc: Document): string {
+  if (doc.type === 'posts') {
+    return `/post/${doc.uid}`;
+  }
+  return '/';
+}
+
+const Client = (req = null) =>
+  // eslint-disable-next-line no-use-before-define
+  Prismic.client(apiEndpoint, createClientOptions(req, accessToken));
+
+const createClientOptions = (req = null, prismicAccessToken = null) => {
+  const reqOption = req ? { req } : {};
+  const accessTokenOption = prismicAccessToken
+    ? { accessToken: prismicAccessToken }
+    : {};
+  return {
+    ...reqOption,
+    ...accessTokenOption,
+  };
+};
 
 // eslint-disable-next-line consistent-return
-export default async (req, res) => {
+const Preview = async (req, res) => {
   const { token: ref, documentId } = req.query;
   const redirectUrl = await Client(req)
     .getPreviewResolver(ref, documentId)
@@ -13,11 +39,8 @@ export default async (req, res) => {
   }
 
   res.setPreviewData({ ref });
-
-  res.write(
-    `<!DOCTYPE html><html><head><meta http-equiv="Refresh" content="0; url=${redirectUrl}" />
-    <script>window.location.href = '${redirectUrl}'</script>
-    </head>`
-  );
+  res.writeHead(302, { Location: `${redirectUrl}` });
   res.end();
 };
+
+export default Preview;
