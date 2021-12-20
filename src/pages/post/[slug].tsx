@@ -40,7 +40,7 @@ interface Post {
 interface PostProps {
   post: Post;
   navigation: {
-    prevPost: {
+    previousPost: {
       uid: string;
       data: {
         title: string;
@@ -145,10 +145,10 @@ export default function Post({
         </section>
 
         <section className={`${styles.navigation} ${commonStyles.container}`}>
-          {navigation?.prevPost.length > 0 && (
+          {navigation?.previousPost.length > 0 && (
             <div>
-              <h3>{navigation.prevPost[0].data.title}</h3>
-              <Link href={`/post/${navigation.prevPost[0].uid}`}>
+              <h3>{navigation.previousPost[0].data.title}</h3>
+              <Link href={`/post/${navigation.previousPost[0].uid}`}>
                 <a>Post anterior</a>
               </Link>
             </div>
@@ -209,7 +209,7 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref || null,
   });
 
-  const prevPost = await prismic.query(
+  const previousPost = await prismic.query(
     [Prismic.Predicates.at('document.type', 'posts')],
     {
       pageSize: 1,
@@ -251,7 +251,7 @@ export const getStaticProps: GetStaticProps = async ({
     props: {
       post,
       navigation: {
-        prevPost: prevPost?.results,
+        previousPost: previousPost?.results,
         nextPost: nextPost?.results,
       },
       preview,
